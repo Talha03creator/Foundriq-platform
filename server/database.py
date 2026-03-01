@@ -11,6 +11,13 @@ class Base(DeclarativeBase):
 
 
 async def get_db():
+    # Only try to init if we haven't already. In a serverless env, 
+    # we need to make sure the tables exist since lifespan is disabled.
+    try:
+        await init_db()
+    except Exception:
+        pass # Ignore if already exists or fails (e.g., concurrency)
+
     async with async_session() as session:
         try:
             yield session
