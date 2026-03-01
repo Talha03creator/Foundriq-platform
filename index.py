@@ -4,32 +4,34 @@ import traceback
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-app = FastAPI(title="FoundrIQ - Diagnostic")
+app = FastAPI(title="FoundrIQ - Module Diagnostic")
 
 @app.get("/")
 def diagnostic():
     results = {}
-    
-    # Test Dependency Imports
-    deps = [
-        "sqlalchemy", 
-        "aiosqlite", 
-        "passlib.context", 
-        "jose", 
-        "dotenv", 
-        "openai", 
-        "pydantic", 
-        "bcrypt",
-        "multipart",
-        "email_validator"
+
+    import_steps = [
+        "server.config",
+        "server.database",
+        "server.auth.security",
+        "server.models.user",
+        "server.models.project",
+        "server.models.report",
+        "server.routes.auth",
+        "server.routes.projects",
+        "server.routes.analysis",
+        "server.routes.dashboard",
+        "server.main"
     ]
-    
-    for dep in deps:
+
+    for step in import_steps:
         try:
-            __import__(dep)
-            results[dep] = "OK"
-        except ImportError as e:
-            results[dep] = f"ERROR: {str(e)}"
+            __import__(step)
+            results[step] = "OK"
+        except Exception as e:
+            results[step] = f"ERROR: {type(e).__name__} - {str(e)}"
+            results[f"{step}_traceback"] = traceback.format_exc()
+            break  # Stop at first failure since subsequent imports might depend on it
 
     return {
         "status": "Diagnostic API Running",
