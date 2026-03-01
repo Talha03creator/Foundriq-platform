@@ -32,7 +32,6 @@ app = FastAPI(
     title="FoundrIQ – AI Decision Intelligence Platform",
     description="Validate startup ideas, analyze risks, forecast revenue, and generate AI-powered strategic reports.",
     version="1.0.0",
-    lifespan=lifespan,
 )
 
 # CORS
