@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyze Business Idea – FoundrIQ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <div class="logo-icon">F</div>
+                <span>FoundrIQ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/analyze" style="color:var(--accent-primary)">New Analysis</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+                <button class="btn btn-ghost btn-sm" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div style="padding-top:calc(var(--nav-height) + 40px);padding-bottom:80px;">
+        <div class="container">
+            <div class="analyze-section">
+                <div style="text-align:center;margin-bottom:40px;">
+                    <div class="section-label">🧠 AI Analysis</div>
+                    <h1 style="font-size:2rem;font-weight:800;margin-bottom:12px;">Analyze Your Business Idea</h1>
+                    <p style="color:var(--text-secondary);max-width:500px;margin:0 auto;">Fill in the details below and
+                        our AI engine will generate a comprehensive analysis with validation scores, risk assessment,
+                        SWOT analysis, and strategy roadmap.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="error-message" id="errorMsg"></div>
+
+                    <form id="analyzeForm">
+                        <div class="form-group">
+                            <label for="businessIdea">💡 Business Idea *</label>
+                            <textarea id="businessIdea"
+                                placeholder="Describe your business idea in detail. What problem does it solve? What makes it unique?"
+                                rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="targetMarket">🎯 Target Market *</label>
+                            <input type="text" id="targetMarket"
+                                placeholder="e.g., Small business owners in the US, Gen Z consumers, Enterprise SaaS"
+                                required>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                            <div class="form-group">
+                                <label for="budget">💰 Budget ($)</label>
+                                <input type="number" id="budget" placeholder="e.g., 50000" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="pricingModel">📋 Pricing Model</label>
+                                <select id="pricingModel">
+                                    <option value="">Select model...</option>
+                                    <option value="Subscription (SaaS)">Subscription (SaaS)</option>
+                                    <option value="Freemium">Freemium</option>
+                                    <option value="One-time Purchase">One-time Purchase</option>
+                                    <option value="Pay-per-Use">Pay-per-Use</option>
+                                    <option value="Marketplace Commission">Marketplace Commission</option>
+                                    <option value="Advertising">Advertising</option>
+                                    <option value="Licensing">Licensing</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="competitors">🏢 Competitors</label>
+                            <textarea id="competitors"
+                                placeholder="List your main competitors and what they offer. e.g., Competitor A – offers X, Competitor B – offers Y"
+                                rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg" style="width:100%;margin-top:12px;"
+                            id="submitBtn">
+                            🚀 Run AI Analysis
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="spinner"></div>
+        <span>🧠 AI is analyzing your business idea...</span>
+        <span style="font-size:0.85rem;color:rgba(255,255,255,0.7);">This may take 10-30 seconds</span>
+    </div>
+
+    <script src="/js/theme.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.requireAuth()) return;
+            document.getElementById('logoutBtn')?.addEventListener('click', () => Auth.logout());
+        });
+
+        document.getElementById('analyzeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const overlay = document.getElementById('loadingOverlay');
+            const errorMsg = document.getElementById('errorMsg');
+            const btn = document.getElementById('submitBtn');
+
+            const businessIdea = document.getElementById('businessIdea').value.trim();
+            const targetMarket = document.getElementById('targetMarket').value.trim();
+            const budget = parseFloat(document.getElementById('budget').value) || null;
+            const pricingModel = document.getElementById('pricingModel').value;
+            const competitors = document.getElementById('competitors').value.trim();
+
+            if (!businessIdea || !targetMarket) {
+                errorMsg.textContent = 'Business idea and target market are required.';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            errorMsg.classList.remove('show');
+            btn.disabled = true;
+            btn.textContent = 'Creating project...';
+
+            try {
+                // Step 1: Create project
+                const createRes = await Auth.fetchWithAuth('/api/projects', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        business_idea: businessIdea,
+                        target_market: targetMarket,
+                        budget: budget,
+                        pricing_model: pricingModel,
+                        competitors: competitors,
+                    }),
+                });
+
+                if (!createRes || !createRes.ok) {
+                    const err = await createRes?.json();
+                    throw new Error(err?.detail || 'Failed to create project');
+                }
+
+                const project = await createRes.json();
+                btn.textContent = 'Running AI analysis...';
+                overlay.classList.remove('hidden');
+
+                // Step 2: Run analysis
+                const analysisRes = await Auth.fetchWithAuth(`/api/analysis/${project.id}`, {
+                    method: 'POST',
+                });
+
+                overlay.classList.add('hidden');
+
+                if (!analysisRes || !analysisRes.ok) {
+                    const err = await analysisRes?.json();
+                    throw new Error(err?.detail || 'Analysis failed');
+                }
+
+                // Redirect to dashboard
+                window.location.href = '/dashboard';
+
+            } catch (err) {
+                overlay.classList.add('hidden');
+                errorMsg.textContent = err.message;
+                errorMsg.classList.add('show');
+                btn.disabled = false;
+                btn.textContent = '🚀 Run AI Analysis';
+            }
+        });
+    </script>
+</body>
+
+</html>

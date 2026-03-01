@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – FoundrIQ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <div class="logo-icon">F</div>
+                <span>FoundrIQ</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/dashboard" style="color:var(--accent-primary)">Dashboard</a>
+                <a href="/analyze">New Analysis</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+                <span id="userName" style="font-size:0.85rem;font-weight:600;color:var(--text-secondary)"></span>
+                <button class="btn btn-ghost btn-sm" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="active">📊 Overview</a>
+                <a href="/analyze">🧠 New Analysis</a>
+                <a href="#projects" id="navProjects">📁 My Projects</a>
+                <a href="#" onclick="return false;">📈 Reports</a>
+                <a href="#" onclick="return false;">⚙️ Settings</a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div>
+                    <h1>Decision Dashboard</h1>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;margin-top:4px;" id="welcomeMsg">Welcome
+                        back!</p>
+                </div>
+                <a href="/analyze" class="btn btn-primary">+ New Analysis</a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">📊</div>
+                    <div class="stat-value counter" data-target="0" id="statProjects">0</div>
+                    <div class="stat-label">Total Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">✅</div>
+                    <div class="stat-value" id="statValidation">0</div>
+                    <div class="stat-label">Avg. Validation Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">⚠️</div>
+                    <div class="stat-value" id="statCompetition">0</div>
+                    <div class="stat-label">Avg. Competition Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">📄</div>
+                    <div class="stat-value" id="statReports">0</div>
+                    <div class="stat-label">AI Reports Generated</div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="chart-row" id="chartsRow" style="display:none;">
+                <div class="chart-card">
+                    <h3>📈 Revenue Projection</h3>
+                    <canvas id="revenueChart" style="width:100%;height:250px;"></canvas>
+                </div>
+                <div class="chart-card" style="text-align:center;">
+                    <h3>🎯 Competition Score</h3>
+                    <canvas id="gaugeChart" style="width:100%;height:150px;margin-top:20px;"></canvas>
+                    <div style="margin-top:16px;">
+                        <div id="riskBadge" class="score-badge medium" style="font-size:0.9rem;padding:6px 16px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SWOT -->
+            <div id="swotSection" style="display:none;">
+                <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:16px;">🎯 SWOT Analysis</h3>
+                <div class="swot-grid">
+                    <div class="swot-card strengths">
+                        <h4>💪 Strengths</h4>
+                        <ul id="swotStrengths"></ul>
+                    </div>
+                    <div class="swot-card weaknesses">
+                        <h4>⚠️ Weaknesses</h4>
+                        <ul id="swotWeaknesses"></ul>
+                    </div>
+                    <div class="swot-card opportunities">
+                        <h4>🚀 Opportunities</h4>
+                        <ul id="swotOpportunities"></ul>
+                    </div>
+                    <div class="swot-card threats">
+                        <h4>🔥 Threats</h4>
+                        <ul id="swotThreats"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy Steps -->
+            <div id="strategySection" style="display:none;">
+                <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:16px;margin-top:32px;">🗺️ Strategy Roadmap
+                </h3>
+                <div class="strategy-timeline" id="strategyTimeline"></div>
+            </div>
+
+            <!-- Project List -->
+            <div id="projectsSection">
+                <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:16px;margin-top:32px;" id="projects">📁 Your
+                    Projects</h3>
+                <div class="project-list" id="projectList">
+                    <p style="color:var(--text-muted);text-align:center;padding:40px;">Loading projects...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="spinner"></div>
+        <span id="loadingText">Analyzing...</span>
+    </div>
+
+    <script src="/js/theme.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/charts.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+
+</html>
