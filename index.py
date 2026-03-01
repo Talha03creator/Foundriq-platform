@@ -8,3 +8,18 @@ if ROOT_DIR not in sys.path:
 
 # Import the actual app from the server module
 from server.main import app
+from fastapi import Request
+from fastapi.responses import JSONResponse
+import traceback
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "message": str(exc),
+            "type": type(exc).__name__,
+            "traceback": traceback.format_exc()
+        },
+    )
