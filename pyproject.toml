@@ -1,0 +1,8 @@
+[project]
+name = "foundriq-platform"
+version = "1.0.0"
+description = "FoundrIQ – AI Decision Intelligence Platform for Entrepreneurs"
+requires-python = ">=3.9"
+
+[project.scripts]
+app = "api.main:app"
