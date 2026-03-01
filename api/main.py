@@ -1,4 +1,11 @@
 import os
+import sys
+
+# Ensure the project root is in the Python path for Vercel serverless execution
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,12 +50,15 @@ app.include_router(projects_router)
 app.include_router(analysis_router)
 app.include_router(dashboard_router)
 
-# Serve frontend static files
-FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
+# Serve frontend static files (only when the directory exists — not in Vercel serverless)
+FRONTEND_DIR = os.path.join(ROOT_DIR, "frontend")
 if os.path.exists(FRONTEND_DIR):
-    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
-    app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
-    app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
+    try:
+        app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
+        app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
+        app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
+    except Exception:
+        pass  # Ignore if static directories are not available (e.g., Vercel serverless)
 
     @app.get("/")
     async def serve_index():
@@ -69,4 +79,3 @@ if os.path.exists(FRONTEND_DIR):
     @app.get("/analyze")
     async def serve_analyze():
         return FileResponse(os.path.join(FRONTEND_DIR, "analyze.html"))
-
