@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel, EmailStr
-from backend.database import get_db
-from backend.models.user import User
-from backend.auth.security import (
+from api.database import get_db
+from api.models.user import User
+from api.auth.security import (
     hash_password, verify_password, create_access_token, get_current_user
 )
 
@@ -74,3 +74,4 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user: User = Depends(get_current_user)):
     return UserResponse(id=current_user.id, email=current_user.email, full_name=current_user.full_name)
+

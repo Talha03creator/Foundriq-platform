@@ -1,6 +1,6 @@
 import datetime
 from sqlalchemy import Column, Integer, String, DateTime
-from backend.database import Base
+from api.database import Base
 
 
 class User(Base):
@@ -11,3 +11,4 @@ class User(Base):
     full_name = Column(String(255), nullable=False)
     hashed_password = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+

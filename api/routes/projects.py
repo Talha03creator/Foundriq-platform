@@ -3,11 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
 from typing import Optional, List
-from backend.database import get_db
-from backend.models.project import Project
-from backend.models.report import Report
-from backend.models.user import User
-from backend.auth.security import get_current_user
+from api.database import get_db
+from api.models.project import Project
+from api.models.report import Report
+from api.models.user import User
+from api.auth.security import get_current_user
 
 router = APIRouter(prefix="/api/projects", tags=["Projects"])
 
@@ -193,3 +193,4 @@ async def delete_project(
     await db.delete(project)
     await db.commit()
     return {"message": "Project deleted"}
+

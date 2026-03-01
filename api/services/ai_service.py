@@ -1,7 +1,7 @@
 import json
 import re
 import random
-from backend.config import OPENAI_API_KEY
+from api.config import OPENAI_API_KEY
 
 # ---------------------------------------------------------------------------
 # AI Service – Business Analysis & Strategy Generation
@@ -244,3 +244,4 @@ Return ONLY valid JSON."""
             {"month": 12, "milestone": "Scale Ready", "target_metric": "Predictable unit economics"}
         ]
     }
+

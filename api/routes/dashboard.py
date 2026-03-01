@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from backend.database import get_db
-from backend.models.project import Project
-from backend.models.report import Report
-from backend.models.user import User
-from backend.auth.security import get_current_user
+from api.database import get_db
+from api.models.project import Project
+from api.models.report import Report
+from api.models.user import User
+from api.auth.security import get_current_user
 
 router = APIRouter(prefix="/api/dashboard", tags=["Dashboard"])
 
@@ -73,3 +73,4 @@ async def get_dashboard(
         "risk_distribution": risk_dist,
         "user": {"id": current_user.id, "full_name": current_user.full_name, "email": current_user.email},
     }
+

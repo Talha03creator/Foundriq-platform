@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from backend.database import get_db
-from backend.models.project import Project
-from backend.models.report import Report
-from backend.models.user import User
-from backend.auth.security import get_current_user
-from backend.services.ai_service import analyze_business, generate_strategy
+from api.database import get_db
+from api.models.project import Project
+from api.models.report import Report
+from api.models.user import User
+from api.auth.security import get_current_user
+from api.services.ai_service import analyze_business, generate_strategy
 
 router = APIRouter(prefix="/api/analysis", tags=["Analysis"])
 
@@ -121,3 +121,4 @@ async def run_strategy(
         target_market=project.target_market,
     )
     return strategy
+

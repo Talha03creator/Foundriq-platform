@@ -4,11 +4,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from backend.database import init_db
-from backend.routes.auth import router as auth_router
-from backend.routes.projects import router as projects_router
-from backend.routes.analysis import router as analysis_router
-from backend.routes.dashboard import router as dashboard_router
+from api.database import init_db
+from api.routes.auth import router as auth_router
+from api.routes.projects import router as projects_router
+from api.routes.analysis import router as analysis_router
+from api.routes.dashboard import router as dashboard_router
 
 
 @asynccontextmanager
@@ -69,3 +69,4 @@ if os.path.exists(FRONTEND_DIR):
     @app.get("/analyze")
     async def serve_analyze():
         return FileResponse(os.path.join(FRONTEND_DIR, "analyze.html"))
+
