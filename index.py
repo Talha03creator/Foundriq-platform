@@ -1,12 +1,8 @@
 """
 Vercel FastAPI Entrypoint
 ========================
-Vercel's native FastAPI runtime auto-detects `app = FastAPI()`
-from specific entrypoints: index.py, app.py, or server.py
-(at root, src/, or app/ directories).
-
-This file re-exports the FastAPI app from api/main.py
-so Vercel can find it. No logic lives here.
+Vercel auto-detects `app = FastAPI()` from index.py at the project root.
+This file re-exports the app from the server package.
 """
 import os
 import sys
@@ -16,4 +12,4 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from api.main import app
+from server.main import app

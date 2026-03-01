@@ -1,6 +1,6 @@
 import datetime
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text
-from api.database import Base
+from server.database import Base
 
 
 class Project(Base):
@@ -15,4 +15,5 @@ class Project(Base):
     competitors = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
 

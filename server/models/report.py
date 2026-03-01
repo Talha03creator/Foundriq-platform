@@ -1,6 +1,6 @@
 import datetime
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text, JSON
-from api.database import Base
+from server.database import Base
 
 
 class Report(Base):
@@ -17,4 +17,5 @@ class Report(Base):
     break_even = Column(JSON, nullable=True)
     full_report = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
 
