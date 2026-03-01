@@ -2,7 +2,21 @@
 name = "foundriq-platform"
 version = "1.0.0"
 description = "FoundrIQ – AI Decision Intelligence Platform for Entrepreneurs"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlalchemy",
+    "aiosqlite",
+    "passlib[bcrypt]",
+    "python-jose[cryptography]",
+    "python-dotenv",
+    "openai",
+    "pydantic",
+    "bcrypt",
+    "python-multipart",
+    "email-validator",
+]
 
 [project.scripts]
 app = "server.main:app"
