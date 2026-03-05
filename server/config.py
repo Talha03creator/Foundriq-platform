@@ -11,18 +11,19 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 # Locally, use SQLite for convenience
 if os.environ.get("VERCEL"):
     # Neon PostgreSQL — persistent across cold starts
-    DATABASE_URL = os.getenv(
-        "DATABASE_URL",
-        "postgresql+asyncpg://neondb_owner:npg_njlskSY7e3AP@ep-blue-meadow-aicj8n2h-pooler.c-4.us-east-1.aws.neon.tech/neondb?ssl=require"
-    )
-    # Ensure correct SQLAlchemy async driver prefix
-    if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
-    elif DATABASE_URL.startswith("postgresql://") and "+asyncpg" not in DATABASE_URL:
-        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+    # NOTE: asyncpg handles SSL differently — we strip ssl params from URL
+    # and pass ssl=True via connect_args instead
+    DATABASE_URL = "postgresql+asyncpg://neondb_owner:npg_njlskSY7e3AP@ep-blue-meadow-aicj8n2h-pooler.c-4.us-east-1.aws.neon.tech/neondb"
+    IS_POSTGRES = True
 else:
     # Local development — SQLite
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///foundriq.db")
+    IS_POSTGRES = "postgresql" in DATABASE_URL or "postgres" in DATABASE_URL
+    if IS_POSTGRES:
+        if DATABASE_URL.startswith("postgres://"):
+            DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif DATABASE_URL.startswith("postgresql://") and "+asyncpg" not in DATABASE_URL:
+            DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 SECRET_KEY = os.getenv("SECRET_KEY", "foundriq-super-secret-key-change-in-production-2024")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")

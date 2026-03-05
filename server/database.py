@@ -1,16 +1,19 @@
+import ssl as ssl_module
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
-from server.config import DATABASE_URL
+from server.config import DATABASE_URL, IS_POSTGRES
 
-# For PostgreSQL with asyncpg, we need to handle SSL
-connect_args = {}
-if "sqlite" in DATABASE_URL:
-    connect_args = {}
-elif "asyncpg" in DATABASE_URL:
-    # asyncpg handles SSL via the connection string params
-    pass
+# Configure engine based on database type
+engine_kwargs = {"echo": False}
 
-engine = create_async_engine(DATABASE_URL, echo=False)
+if IS_POSTGRES:
+    # asyncpg requires SSL context for Neon PostgreSQL
+    ssl_context = ssl_module.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl_module.CERT_NONE
+    engine_kwargs["connect_args"] = {"ssl": ssl_context}
+
+engine = create_async_engine(DATABASE_URL, **engine_kwargs)
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 _db_initialized = False
