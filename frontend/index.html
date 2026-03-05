@@ -398,6 +398,48 @@
 
     <script src="/js/theme.js"></script>
     <script src="/js/animations.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.Auth && Auth.isAuthenticated()) {
+                // Update Nav Bar
+                const navLoginBtn = document.getElementById('navLoginBtn');
+                const navSignupBtn = document.getElementById('navSignupBtn');
+
+                if (navLoginBtn) {
+                    navLoginBtn.textContent = 'Dashboard';
+                    navLoginBtn.href = '/dashboard';
+                }
+                if (navSignupBtn) {
+                    navSignupBtn.textContent = 'Log Out';
+                    navSignupBtn.href = '#';
+                    navSignupBtn.classList.remove('btn-primary');
+                    navSignupBtn.classList.add('btn-ghost');
+                    navSignupBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        Auth.logout();
+                    });
+                }
+
+                // Update Hero Button
+                const heroBtns = document.querySelectorAll('.hero-actions .btn-primary');
+                heroBtns.forEach(btn => {
+                    if (btn.textContent.includes('Get Started')) {
+                        btn.textContent = 'Go to Dashboard →';
+                        btn.href = '/dashboard';
+                    }
+                });
+
+                // Update specific pricing cards
+                const pricingBtns = document.querySelectorAll('.pricing-card .btn');
+                pricingBtns.forEach(btn => {
+                    if (btn.href.includes('/signup')) {
+                        btn.href = '/dashboard';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
